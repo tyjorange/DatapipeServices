@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.slst.datapipe.dao.TConnecttermMapper">
+	<resultMap id="BaseResultMap" type="com.slst.datapipe.dao.pojo.TConnectterm">
+		<id column="CTID" property="ctid" jdbcType="VARCHAR" />
+		<result column="SOCKETMODE" property="socketmode" jdbcType="TINYINT" />
+		<association property="connect" javaType="com.slst.datapipe.dao.pojo.TConnect">
+			<id property="cid" column="CID" jdbcType="VARCHAR" />
+			<result property="port" column="PORT" jdbcType="SMALLINT" />
+			<result property="configtime" column="CONFIGTIME" jdbcType="BIGINT" />
+			<result property="cryptkey" column="CRYPTKEY" jdbcType="VARCHAR" />
+			<result property="comment" column="COMMENT" jdbcType="VARCHAR" />
+		</association>
+		<association property="term" javaType="com.slst.datapipe.dao.pojo.TTerm">
+			<id property="imei" column="IMEI" jdbcType="VARCHAR" />
+			<result property="ip" column="IP" jdbcType="BIGINT" />
+			<result property="hbtime" column="HBTIME" jdbcType="DATE" />
+			<result property="comment" column="COMMENT" jdbcType="VARCHAR" />
+		</association>
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		CTID, CID, IMEI, SOCKETMODE
+	</sql>
+	<select id="selectByExampleWith" resultMap="BaseResultMap"
+		parameterType="com.slst.datapipe.dao.pojo.TConnecttermExample">
+		SELECT
+		t_connectterm.CTID,
+		t_connectterm.CID,
+		t_connectterm.IMEI,
+		t_connectterm.SOCKETMODE,
+		t_term.IP,
+		t_term.`COMMENT`,
+		t_term.HBTIME,
+		t_connect.`PORT`,
+		t_connect.CONFIGTIME,
+		t_connect.CRYPTKEY,
+		t_connect.`COMMENT`
+		FROM
+		t_connectterm
+		INNER JOIN t_term ON t_connectterm.IMEI = t_term.IMEI
+		INNER JOIN t_connect ON t_connectterm.CID = t_connect.CID
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByExample" resultMap="BaseResultMap" parameterType="com.slst.datapipe.dao.pojo.TConnecttermExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from t_connectterm
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from t_connectterm
+		where CTID = #{ctid,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from t_connectterm
+		where CTID =
+		#{ctid,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteByExample" parameterType="com.slst.datapipe.dao.pojo.TConnecttermExample">
+		delete from t_connectterm
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.slst.datapipe.dao.pojo.TConnectterm">
+		insert into t_connectterm (CTID, CID, IMEI,
+		SOCKETMODE)
+		values (#{ctid,jdbcType=VARCHAR}, #{cid,jdbcType=VARCHAR}, #{imei,jdbcType=VARCHAR},
+		#{socketmode,jdbcType=TINYINT})
+	</insert>
+	<insert id="insertSelective" parameterType="com.slst.datapipe.dao.pojo.TConnectterm">
+		insert into t_connectterm
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="ctid != null">
+				CTID,
+			</if>
+			<if test="cid != null">
+				CID,
+			</if>
+			<if test="imei != null">
+				IMEI,
+			</if>
+			<if test="socketmode != null">
+				SOCKETMODE,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="ctid != null">
+				#{ctid,jdbcType=VARCHAR},
+			</if>
+			<if test="cid != null">
+				#{cid,jdbcType=VARCHAR},
+			</if>
+			<if test="imei != null">
+				#{imei,jdbcType=VARCHAR},
+			</if>
+			<if test="socketmode != null">
+				#{socketmode,jdbcType=TINYINT},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample" parameterType="com.slst.datapipe.dao.pojo.TConnecttermExample"
+		resultType="java.lang.Integer">
+		select count(*) from t_connectterm
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update t_connectterm
+		<set>
+			<if test="record.ctid != null">
+				CTID = #{record.ctid,jdbcType=VARCHAR},
+			</if>
+			<if test="record.cid != null">
+				CID = #{record.cid,jdbcType=VARCHAR},
+			</if>
+			<if test="record.imei != null">
+				IMEI = #{record.imei,jdbcType=VARCHAR},
+			</if>
+			<if test="record.socketmode != null">
+				SOCKETMODE = #{record.socketmode,jdbcType=TINYINT},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update t_connectterm
+		set CTID = #{record.ctid,jdbcType=VARCHAR},
+		CID =
+		#{record.cid,jdbcType=VARCHAR},
+		IMEI = #{record.imei,jdbcType=VARCHAR},
+		SOCKETMODE =
+		#{record.socketmode,jdbcType=TINYINT}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective" parameterType="com.slst.datapipe.dao.pojo.TConnectterm">
+		update t_connectterm
+		<set>
+			<if test="cid != null">
+				CID = #{cid,jdbcType=VARCHAR},
+			</if>
+			<if test="imei != null">
+				IMEI = #{imei,jdbcType=VARCHAR},
+			</if>
+			<if test="socketmode != null">
+				SOCKETMODE = #{socketmode,jdbcType=TINYINT},
+			</if>
+		</set>
+		where CTID = #{ctid,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.slst.datapipe.dao.pojo.TConnectterm">
+		update t_connectterm
+		set CID =
+		#{cid,jdbcType=VARCHAR},
+		IMEI = #{imei,jdbcType=VARCHAR},
+		SOCKETMODE =
+		#{socketmode,jdbcType=TINYINT}
+		where CTID = #{ctid,jdbcType=VARCHAR}
+	</update>
+</mapper>

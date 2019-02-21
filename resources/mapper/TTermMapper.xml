@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.slst.datapipe.dao.TTermMapper">
+	<resultMap id="BaseResultMap" type="com.slst.datapipe.dao.pojo.TTerm">
+		<id column="IMEI" property="imei" jdbcType="VARCHAR" />
+		<result column="IP" property="ip" jdbcType="BIGINT" />
+		<result column="HBTIME" property="hbtime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<resultMap id="ResultMapWithBLOBs" type="com.slst.datapipe.dao.pojo.TTerm" extends="BaseResultMap">
+		<result column="COMMENT" property="comment" jdbcType="LONGVARCHAR" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		IMEI, IP, HBTIME
+	</sql>
+	<sql id="Blob_Column_List">
+		COMMENT
+	</sql>
+	<select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.slst.datapipe.dao.pojo.TTermExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from t_term
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByExample" resultMap="BaseResultMap" parameterType="com.slst.datapipe.dao.pojo.TTermExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from t_term
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from t_term
+		where IMEI = #{imei,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from t_term
+		where IMEI =
+		#{imei,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteByExample" parameterType="com.slst.datapipe.dao.pojo.TTermExample">
+		delete from t_term
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.slst.datapipe.dao.pojo.TTerm">
+		insert into t_term (IMEI, IP, HBTIME,
+		COMMENT)
+		values
+		(#{imei,jdbcType=VARCHAR}, #{ip,jdbcType=BIGINT}, #{hbtime,jdbcType=TIMESTAMP},
+		#{comment,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.slst.datapipe.dao.pojo.TTerm">
+		insert into t_term
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="imei != null">
+				IMEI,
+			</if>
+			<if test="ip != null">
+				IP,
+			</if>
+			<if test="hbtime != null">
+				HBTIME,
+			</if>
+			<if test="comment != null">
+				COMMENT,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="imei != null">
+				#{imei,jdbcType=VARCHAR},
+			</if>
+			<if test="ip != null">
+				#{ip,jdbcType=BIGINT},
+			</if>
+			<if test="hbtime != null">
+				#{hbtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="comment != null">
+				#{comment,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample" parameterType="com.slst.datapipe.dao.pojo.TTermExample"
+		resultType="java.lang.Integer">
+		select count(*) from t_term
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update t_term
+		<set>
+			<if test="record.imei != null">
+				IMEI = #{record.imei,jdbcType=VARCHAR},
+			</if>
+			<if test="record.ip != null">
+				IP = #{record.ip,jdbcType=BIGINT},
+			</if>
+			<if test="record.hbtime != null">
+				HBTIME = #{record.hbtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.comment != null">
+				COMMENT = #{record.comment,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExampleWithBLOBs" parameterType="map">
+		update t_term
+		set IMEI = #{record.imei,jdbcType=VARCHAR},
+		IP = #{record.ip,jdbcType=BIGINT},
+		HBTIME =
+		#{record.hbtime,jdbcType=TIMESTAMP},
+		COMMENT = #{record.comment,jdbcType=LONGVARCHAR}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update t_term
+		set IMEI = #{record.imei,jdbcType=VARCHAR},
+		IP = #{record.ip,jdbcType=BIGINT},
+		HBTIME = #{record.hbtime,jdbcType=TIMESTAMP}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective" parameterType="com.slst.datapipe.dao.pojo.TTerm">
+		update t_term
+		<set>
+			<if test="ip != null">
+				IP = #{ip,jdbcType=BIGINT},
+			</if>
+			<if test="hbtime != null">
+				HBTIME = #{hbtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="comment != null">
+				COMMENT = #{comment,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where IMEI = #{imei,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.slst.datapipe.dao.pojo.TTerm">
+		update t_term
+		set IP =
+		#{ip,jdbcType=BIGINT},
+		HBTIME = #{hbtime,jdbcType=TIMESTAMP},
+		COMMENT =
+		#{comment,jdbcType=LONGVARCHAR}
+		where IMEI = #{imei,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.slst.datapipe.dao.pojo.TTerm">
+		update t_term
+		set IP = #{ip,jdbcType=BIGINT},
+		HBTIME = #{hbtime,jdbcType=TIMESTAMP}
+		where IMEI = #{imei,jdbcType=VARCHAR}
+	</update>
+</mapper>

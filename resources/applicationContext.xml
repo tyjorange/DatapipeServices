@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation=" 
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd    
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd 
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd ">
+	<!-- 自动扫描该包下用了@controller注解的类为控制器 -->
+	<context:component-scan base-package="com.slst.datapipe" />
+	<!-- 读取配置文件 -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc.properties</value>
+				<value>classpath:dserver.properties</value>
+			</list>
+		</property>
+	</bean>
+	<!--DatapipeServer初始化 使用配置文件参数并注入 -->
+	<bean class="com.slst.datapipe.DatapipeServer">
+		<property name="LOCAL_PORT" value="${dserver.port}" />
+	</bean>
+	<!-- 日志信息等级设置 -->
+	<bean id="INFO" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+		<property name="staticField" value="io.netty.handler.logging.LogLevel.INFO" />
+	</bean>
+	<bean class="io.netty.handler.logging.LoggingHandler">
+		<constructor-arg ref="INFO" />
+	</bean>
+	<!-- 设置MAP -->
+	<util:map id="ctxmap" key-type="java.lang.String" value-type="io.netty.channel.ChannelHandlerContext;">
+	</util:map>
+	<util:map id="timemap" key-type="java.lang.String" value-type="java.lang.Long">
+	</util:map>
+	<!-- 需要被注入外部JAR的类 -->
+	<bean class="io.netty.channel.nio.NioEventLoopGroup" scope="prototype" />
+	<bean class="io.netty.bootstrap.ServerBootstrap" />
+	<bean class="java.lang.StringBuilder" />
+	<bean class="java.util.HashMap" />
+	<!-- MyBatis 配置 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${driver}" />
+		<property name="url" value="${url}" />
+		<property name="username" value="${username}" />
+		<property name="password" value="${password}" />
+		<!-- 初始化连接大小 -->
+		<property name="initialSize" value="${initialSize}"></property>
+		<!-- 连接池最大数量 -->
+		<property name="maxActive" value="${maxActive}"></property>
+		<!-- 连接池最大空闲 -->
+		<property name="maxIdle" value="${maxIdle}"></property>
+		<!-- 连接池最小空闲 -->
+		<property name="minIdle" value="${minIdle}"></property>
+		<!-- 获取连接最大等待时间 -->
+		<property name="maxWait" value="${maxWait}"></property>
+	</bean>
+	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- 自动扫描mapping.xml文件 -->
+		<property name="mapperLocations" value="classpath:mapper/*Mapper.xml"></property>
+	</bean>
+	<!-- Mapper接口所在包名，Spring会自动查找其下的类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.slst.datapipe.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+	<!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+</beans>
